@@ -6,16 +6,25 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      width: 300px;
-      padding: 10px;
+      width: 400px;
+      padding: 15px;
     }
     h1 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #333;
+      text-align: center;
+    }
+    h2 {
       font-size: 16px;
+      margin-top: 15px;
       margin-bottom: 10px;
+      color: #444;
     }
     table {
       width: 100%;
       border-collapse: collapse;
+      margin-bottom: 10px;
     }
     th, td {
       border: 1px solid #ddd;
@@ -24,35 +33,71 @@
     }
     th {
       background-color: #f2f2f2;
+      font-weight: bold;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
     }
     .extract-btn {
       background-color: #4285f4;
       color: white;
       border: none;
-      padding: 8px 16px;
-      margin-bottom: 10px;
+      padding: 10px 18px;
+      margin-bottom: 15px;
       cursor: pointer;
       border-radius: 4px;
+      font-weight: bold;
+      display: block;
+      width: 100%;
     }
     .extract-btn:hover {
       background-color: #3367d6;
     }
     .loading {
       text-align: center;
-      margin: 10px 0;
+      margin: 15px 0;
+      font-style: italic;
+      color: #666;
     }
-    .average {
-      font-weight: bold;
-      margin-top: 10px;
+    .promotion-status {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+    }
+    .promotion-rule {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+      font-style: italic;
+    }
+    .summary-section {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #f0f7ff;
+      border-radius: 4px;
+      border: 1px solid #c0d6f9;
+    }
+    .course-section {
+      margin-bottom: 15px;
     }
   </style>
 </head>
 <body>
-  <h1>Grade Extractor</h1>
-  <button class="extract-btn" id="extractBtn">Extract Grades</button>
-  <div id="loading" class="loading" style="display: none;">Extracting grades...</div>
+  <h1>Grade Analyzer</h1>
+  <button class="extract-btn" id="extractBtn">Extract & Analyze Grades</button>
+  <div id="loading" class="loading" style="display: none;">Extracting and analyzing grades...</div>
   <div id="gradesContainer">
-    <p>Click the Extract Grades button to view your grades.</p>
+    <p>Click the Extract & Analyze Grades button to view your grades and check promotion status.</p>
+    <div class="promotion-rule">
+      <p><strong>Promotion Rules:</strong></p>
+      <ul>
+        <li>Average grade must be at least 4.0</li>
+        <li>Total deficit of failing grades must not exceed 2.0</li>
+        <li>Maximum of 2 failing grades allowed</li>
+      </ul>
+    </div>
   </div>
   <script src="popup.js"></script>
 </body>

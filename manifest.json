@@ -1,9 +1,8 @@
-
 {
     "manifest_version": 3,
-    "name": "Grade Extractor",
-    "version": "1.0",
-    "description": "Extracts and displays course grades",
+    "name": "Grade Analyzer",
+    "version": "1.1",
+    "description": "Extracts, categorizes and analyzes course grades with promotion status",
     "permissions": ["activeTab", "scripting"],
     "action": {
       "default_popup": "popup.html",
