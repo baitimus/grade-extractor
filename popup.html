@@ -1,0 +1,59 @@
+<!-- popup.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      width: 300px;
+      padding: 10px;
+    }
+    h1 {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .extract-btn {
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .extract-btn:hover {
+      background-color: #3367d6;
+    }
+    .loading {
+      text-align: center;
+      margin: 10px 0;
+    }
+    .average {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Grade Extractor</h1>
+  <button class="extract-btn" id="extractBtn">Extract Grades</button>
+  <div id="loading" class="loading" style="display: none;">Extracting grades...</div>
+  <div id="gradesContainer">
+    <p>Click the Extract Grades button to view your grades.</p>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
