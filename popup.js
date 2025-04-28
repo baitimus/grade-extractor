@@ -24,30 +24,19 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create overall container
             const container = document.createElement('div');
             
-            // Calculate and display the summary for each school
+            // Calculate the rounded averages for each school
             const inaAverage = calculateRoundedAverage(data.inaCourses);
             const bmAverage = calculateRoundedAverage(data.bmCourses);
             const otherAverage = calculateRoundedAverage(data.otherCourses);
             
-            // Add the summary section
-            addSummarySection(container, inaAverage, bmAverage, otherAverage);
+            // Create the promotion status panel
+            addPromotionStatus(container, inaAverage, bmAverage, [...data.inaCourses, ...data.bmCourses, ...data.otherCourses]);
             
-            // Add course lists (simplified)
-            if (data.inaCourses.length > 0) {
-              addSimpleCourseSection(container, data.inaCourses, 'INA School Courses');
-            }
+            // Add compact school summary
+            addCompactSchoolSummary(container, data, inaAverage, bmAverage, otherAverage);
             
-            if (data.bmCourses.length > 0) {
-              addSimpleCourseSection(container, data.bmCourses, 'BM School Courses');
-            }
-            
-            if (data.otherCourses.length > 0) {
-              addSimpleCourseSection(container, data.otherCourses, 'Other Courses');
-            }
-            
-            // Check promotion status
-            const allCourses = [...data.inaCourses, ...data.bmCourses, ...data.otherCourses];
-            addPromotionStatus(container, inaAverage, bmAverage, allCourses);
+            // Add the details toggle button and details section
+            addDetailsSection(container, data);
             
             gradesContainer.appendChild(container);
           } else {
@@ -59,13 +48,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Round to 0.25 steps to the nearest half grade
     function roundGrade(grade) {
-      // For values ending in .75, round up to the next full number
-      if (grade % 1 >= 0.75) {
-        return Math.ceil(grade);
-      }
+     
       
-      // Otherwise round to nearest 0.25
-      return Math.round(grade * 4) / 4;
+      // Otherwise round to nearest 0.5
+      return Math.round(grade * 2) / 2;
     }
     
     function calculateRoundedAverage(courses) {
@@ -84,122 +70,158 @@ document.addEventListener('DOMContentLoaded', function() {
       return roundGrade(average);
     }
     
-    function addSummarySection(container, inaAverage, bmAverage, otherAverage) {
+    function addCompactSchoolSummary(container, data, inaAverage, bmAverage, otherAverage) {
       const summaryDiv = document.createElement('div');
-      summaryDiv.className = 'summary-section';
+      summaryDiv.className = 'school-summary';
+      summaryDiv.style.marginTop = '20px';
       summaryDiv.style.marginBottom = '20px';
-      summaryDiv.style.padding = '10px';
-      summaryDiv.style.backgroundColor = '#f0f7ff';
-      summaryDiv.style.borderRadius = '4px';
-      summaryDiv.style.border = '1px solid #c0d6f9';
       
-      const summaryTitle = document.createElement('h2');
-      summaryTitle.textContent = 'Grade Summary';
-      summaryTitle.style.fontSize = '16px';
-      summaryTitle.style.marginTop = '0';
-      summaryTitle.style.marginBottom = '10px';
-      summaryDiv.appendChild(summaryTitle);
-      
-      const summaryTable = document.createElement('table');
-      summaryTable.style.width = '100%';
-      
-      // Add header row
-      const thead = document.createElement('thead');
-      const headerRow = document.createElement('tr');
-      
-      const schoolHeader = document.createElement('th');
-      schoolHeader.textContent = 'School';
-      
-      const averageHeader = document.createElement('th');
-      averageHeader.textContent = 'Average Grade';
-      
-      headerRow.appendChild(schoolHeader);
-      headerRow.appendChild(averageHeader);
-      thead.appendChild(headerRow);
-      summaryTable.appendChild(thead);
-      
-      // Add body rows
-      const tbody = document.createElement('tbody');
-      
-      // INA School row
-      if (inaAverage > 0) {
-        const inaRow = document.createElement('tr');
-        
-        const inaCell = document.createElement('td');
-        inaCell.textContent = 'INA School';
-        
-        const inaAvgCell = document.createElement('td');
-        inaAvgCell.textContent = inaAverage.toFixed(2);
-        inaAvgCell.style.fontWeight = 'bold';
-        
-        inaRow.appendChild(inaCell);
-        inaRow.appendChild(inaAvgCell);
-        tbody.appendChild(inaRow);
+      // Create the compact school grade panels
+      if (data.inaCourses.length > 0) {
+        const inaPanel = createSchoolPanel('INA School', data.inaCourses, inaAverage);
+        summaryDiv.appendChild(inaPanel);
       }
       
-      // BM School row
-      if (bmAverage > 0) {
-        const bmRow = document.createElement('tr');
-        
-        const bmCell = document.createElement('td');
-        bmCell.textContent = 'BM School';
-        
-        const bmAvgCell = document.createElement('td');
-        bmAvgCell.textContent = bmAverage.toFixed(2);
-        bmAvgCell.style.fontWeight = 'bold';
-        
-        bmRow.appendChild(bmCell);
-        bmRow.appendChild(bmAvgCell);
-        tbody.appendChild(bmRow);
+      if (data.bmCourses.length > 0) {
+        const bmPanel = createSchoolPanel('BM School', data.bmCourses, bmAverage);
+        summaryDiv.appendChild(bmPanel);
       }
       
-      // Other courses row
-      if (otherAverage > 0) {
-        const otherRow = document.createElement('tr');
-        
-        const otherCell = document.createElement('td');
-        otherCell.textContent = 'Other Courses';
-        
-        const otherAvgCell = document.createElement('td');
-        otherAvgCell.textContent = otherAverage.toFixed(2);
-        otherAvgCell.style.fontWeight = 'bold';
-        
-        otherRow.appendChild(otherCell);
-        otherRow.appendChild(otherAvgCell);
-        tbody.appendChild(otherRow);
-      }
+     /* if (data.otherCourses.length > 0) {
+        const otherPanel = createSchoolPanel('Other Courses', data.otherCourses, otherAverage);
+        summaryDiv.appendChild(otherPanel);}
+      */
       
-      summaryTable.appendChild(tbody);
-      summaryDiv.appendChild(summaryTable);
       container.appendChild(summaryDiv);
     }
     
-    function addSimpleCourseSection(container, courses, title) {
+    function createSchoolPanel(schoolName, courses, average) {
+      const panel = document.createElement('div');
+      panel.className = 'school-panel';
+      panel.style.marginBottom = '12px';
+      panel.style.padding = '12px';
+      panel.style.borderRadius = '4px';
+      panel.style.border = '1px solid #ddd';
+      panel.style.backgroundColor = '#f9f9f9';
+      
+      // Create header row with school name and average
+      const header = document.createElement('div');
+      header.style.display = 'flex';
+      header.style.justifyContent = 'space-between';
+      header.style.marginBottom = '8px';
+      header.style.fontWeight = 'bold';
+      
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = schoolName;
+      
+      const avgSpan = document.createElement('span');
+      avgSpan.textContent = `Average: ${average.toFixed(2)}`;
+      avgSpan.style.color = average >= 4.0 ? 'green' : 'red';
+      
+      header.appendChild(nameSpan);
+      header.appendChild(avgSpan);
+      panel.appendChild(header);
+      
+      // Count passing and failing courses
+      const passing = courses.filter(c => c.numericGrade >= 4.0).length;
+      const failing = courses.filter(c => c.numericGrade > 0 && c.numericGrade < 4.0).length;
+      
+      // Create simple status line
+      const statusLine = document.createElement('div');
+      statusLine.style.fontSize = '14px';
+      statusLine.innerHTML = `<span style="color:green">✓ ${passing} passing</span> | <span style="color:red">✗ ${failing} failing</span> | ${courses.length} total courses`;
+      panel.appendChild(statusLine);
+      
+      return panel;
+    }
+    
+    function addDetailsSection(container, data) {
+      // Create toggle button
+      const toggleDiv = document.createElement('div');
+      toggleDiv.style.textAlign = 'center';
+      toggleDiv.style.marginBottom = '15px';
+      
+      const toggleBtn = document.createElement('button');
+      toggleBtn.className = 'toggle-btn';
+      toggleBtn.textContent = 'Show All Course Details';
+      toggleBtn.style.backgroundColor = '#f2f2f2';
+      toggleBtn.style.border = '1px solid #ddd';
+      toggleBtn.style.borderRadius = '4px';
+      toggleBtn.style.padding = '6px 12px';
+      toggleBtn.style.cursor = 'pointer';
+      toggleBtn.style.fontSize = '14px';
+      
+      toggleDiv.appendChild(toggleBtn);
+      container.appendChild(toggleDiv);
+      
+      // Create details container (hidden by default)
+      const detailsDiv = document.createElement('div');
+      detailsDiv.id = 'details-section';
+      detailsDiv.style.display = 'none';
+      detailsDiv.style.marginTop = '15px';
+      detailsDiv.style.border = '1px solid #eee';
+      detailsDiv.style.borderRadius = '4px';
+      detailsDiv.style.padding = '10px';
+      
+      // Add course details for each school
+      if (data.inaCourses.length > 0) {
+        addCourseDetails(detailsDiv, data.inaCourses, 'INA School Courses');
+      }
+      
+      if (data.bmCourses.length > 0) {
+        addCourseDetails(detailsDiv, data.bmCourses, 'BM School Courses');
+      }
+      
+      if (data.otherCourses.length > 0) {
+        addCourseDetails(detailsDiv, data.otherCourses, 'Other Courses');
+      }
+      
+      container.appendChild(detailsDiv);
+      
+      // Toggle functionality
+      toggleBtn.addEventListener('click', function() {
+        if (detailsDiv.style.display === 'none') {
+          detailsDiv.style.display = 'block';
+          toggleBtn.textContent = 'Hide Course Details';
+        } else {
+          detailsDiv.style.display = 'none';
+          toggleBtn.textContent = 'Show All Course Details';
+        }
+      });
+    }
+    
+    function addCourseDetails(container, courses, title) {
       const sectionDiv = document.createElement('div');
       sectionDiv.className = 'course-section';
       sectionDiv.style.marginBottom = '15px';
       
       // Add section title
-      const sectionTitle = document.createElement('h2');
+      const sectionTitle = document.createElement('h3');
       sectionTitle.textContent = title;
-      sectionTitle.style.fontSize = '16px';
-      sectionTitle.style.marginTop = '15px';
-      sectionTitle.style.marginBottom = '10px';
+      sectionTitle.style.fontSize = '15px';
+      sectionTitle.style.marginTop = '10px';
+      sectionTitle.style.marginBottom = '8px';
       sectionDiv.appendChild(sectionTitle);
       
-      // Create simple table
+      // Create table
       const table = document.createElement('table');
       
       // Table header
       const thead = document.createElement('thead');
       const headerRow = document.createElement('tr');
+      
       const courseHeader = document.createElement('th');
       courseHeader.textContent = 'Course';
+      
       const gradeHeader = document.createElement('th');
       gradeHeader.textContent = 'Grade';
       
+      const statusHeader = document.createElement('th');
+      statusHeader.textContent = 'Status';
+      
       headerRow.appendChild(courseHeader);
       headerRow.appendChild(gradeHeader);
+      headerRow.appendChild(statusHeader);
       thead.appendChild(headerRow);
       table.appendChild(thead);
       
@@ -215,15 +237,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const gradeCell = document.createElement('td');
         gradeCell.textContent = course.grade;
         
-        // Color code based on grade
+        const statusCell = document.createElement('td');
+        
         if (course.numericGrade >= 4.0) {
-          gradeCell.style.color = 'green';
+          statusCell.textContent = 'Pass';
+          statusCell.style.color = 'green';
         } else if (course.numericGrade > 0) {
-          gradeCell.style.color = 'red';
+          statusCell.textContent = 'Fail';
+          statusCell.style.color = 'red';
+        } else {
+          statusCell.textContent = '-';
         }
         
         row.appendChild(courseCell);
         row.appendChild(gradeCell);
+        row.appendChild(statusCell);
         tbody.appendChild(row);
       });
       
@@ -235,18 +263,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function addPromotionStatus(container, inaAverage, bmAverage, allCourses) {
       const promotionDiv = document.createElement('div');
       promotionDiv.className = 'promotion-status';
-      promotionDiv.style.marginTop = '20px';
       promotionDiv.style.padding = '15px';
-      promotionDiv.style.border = '1px solid #ddd';
       promotionDiv.style.borderRadius = '4px';
-      promotionDiv.style.backgroundColor = '#f9f9f9';
-      
-      const promotionTitle = document.createElement('h2');
-      promotionTitle.textContent = 'Promotion Status';
-      promotionTitle.style.fontSize = '18px';
-      promotionTitle.style.marginTop = '0';
-      promotionTitle.style.marginBottom = '15px';
-      promotionDiv.appendChild(promotionTitle);
       
       // Filter only courses with numeric grades
       const gradedCourses = allCourses.filter(course => course.numericGrade > 0);
@@ -258,12 +276,12 @@ document.addEventListener('DOMContentLoaded', function() {
         container.appendChild(promotionDiv);
         return;
       }
-      
+      //TODO: change the logic to 
       // Count failing grades and calculate deficit
       const failingCourses = gradedCourses.filter(course => course.numericGrade < 4.0);
       const gradeDeficit = failingCourses.reduce((sum, course) => sum + (4.0 - course.numericGrade), 0);
       
-      // Create simple promotion status
+      // Calculate overall average
       const overallAverage = ((inaAverage > 0 ? inaAverage : 0) + (bmAverage > 0 ? bmAverage : 0)) / 
                             ((inaAverage > 0 ? 1 : 0) + (bmAverage > 0 ? 1 : 0));
       
@@ -272,44 +290,56 @@ document.addEventListener('DOMContentLoaded', function() {
       const countMet = failingCourses.length <= 2;
       const isPromoted = avgMet && deficitMet && countMet;
       
-      // Create promotion result display
-      const promotionResult = document.createElement('div');
-      promotionResult.style.fontSize = '16px';
-      promotionResult.style.fontWeight = 'bold';
-      promotionResult.style.padding = '10px';
-      promotionResult.style.borderRadius = '4px';
-      promotionResult.style.backgroundColor = isPromoted ? '#dff0d8' : '#f2dede';
-      promotionResult.style.color = isPromoted ? '#3c763d' : '#a94442';
-      promotionResult.style.textAlign = 'center';
-      promotionResult.style.marginBottom = '15px';
+      // Set the background color based on promotion status
+      promotionDiv.style.backgroundColor = isPromoted ? '#dff0d8' : '#f2dede';
+      promotionDiv.style.border = isPromoted ? '1px solid #d6e9c6' : '1px solid #ebccd1';
       
-      promotionResult.textContent = isPromoted 
-        ? 'PROMOTED to next semester ✓' 
-        : 'NOT PROMOTED to next semester ✗';
+      // Create status header
+      const statusHeader = document.createElement('div');
+      statusHeader.style.display = 'flex';
+      statusHeader.style.justifyContent = 'center';
+      statusHeader.style.alignItems = 'center';
+      statusHeader.style.marginBottom = '10px';
       
-      promotionDiv.appendChild(promotionResult);
+      const statusIcon = document.createElement('span');
+      statusIcon.textContent = isPromoted ? '✓ ' : '✗ ';
+      statusIcon.style.fontSize = '24px';
+      statusIcon.style.marginRight = '10px';
+      statusIcon.style.color = isPromoted ? '#3c763d' : '#a94442';
       
-      // Add summary of checks
+      const statusText = document.createElement('span');
+      statusText.textContent = isPromoted ? 'PROMOTED' : 'NOT PROMOTED';
+      statusText.style.fontSize = '20px';
+      statusText.style.fontWeight = 'bold';
+      statusText.style.color = isPromoted ? '#3c763d' : '#a94442';
+      
+      statusHeader.appendChild(statusIcon);
+      statusHeader.appendChild(statusText);
+      promotionDiv.appendChild(statusHeader);
+      
+      // Create compact summary of checks
       const checksDiv = document.createElement('div');
-      checksDiv.style.fontSize = '14px';
+      checksDiv.style.fontSize = '13px';
+      checksDiv.style.textAlign = 'center';
+      checksDiv.style.marginTop = '10px';
       
-      // Average check
-      const avgCheck = document.createElement('p');
-      avgCheck.style.margin = '5px 0';
-      avgCheck.innerHTML = `<span style="color:${avgMet ? 'green' : 'red'}">${avgMet ? '✓' : '✗'}</span> Overall average: <strong>${overallAverage.toFixed(2)}</strong> (min. 4.0 required)`;
-      checksDiv.appendChild(avgCheck);
+      // Overall average
+      const avgLine = document.createElement('div');
+      avgLine.innerHTML = `Overall Average: <strong>${overallAverage.toFixed(2)}</strong> (min. 4.0) 
+                        <span style="color:${avgMet ? 'green' : 'red'}">${avgMet ? '✓' : '✗'}</span>`;
+      checksDiv.appendChild(avgLine);
       
-      // Grade deficit check
-      const deficitCheck = document.createElement('p');
-      deficitCheck.style.margin = '5px 0';
-      deficitCheck.innerHTML = `<span style="color:${deficitMet ? 'green' : 'red'}">${deficitMet ? '✓' : '✗'}</span> Grade deficit: <strong>${gradeDeficit.toFixed(2)}</strong> (max. 2.0 allowed)`;
-      checksDiv.appendChild(deficitCheck);
+      // Grade deficit
+      const deficitLine = document.createElement('div');
+      deficitLine.innerHTML = `Grade Deficit: <strong>${gradeDeficit.toFixed(2)}</strong> (max. 2.0) 
+                            <span style="color:${deficitMet ? 'green' : 'red'}">${deficitMet ? '✓' : '✗'}</span>`;
+      checksDiv.appendChild(deficitLine);
       
-      // Failed courses count check
-      const countCheck = document.createElement('p');
-      countCheck.style.margin = '5px 0';
-      countCheck.innerHTML = `<span style="color:${countMet ? 'green' : 'red'}">${countMet ? '✓' : '✗'}</span> Failing grades: <strong>${failingCourses.length}</strong> (max. 2 allowed)`;
-      checksDiv.appendChild(countCheck);
+      // Failed courses count
+      const countLine = document.createElement('div');
+      countLine.innerHTML = `Failing Grades: <strong>${failingCourses.length}</strong> (max. 2) 
+                          <span style="color:${countMet ? 'green' : 'red'}">${countMet ? '✓' : '✗'}</span>`;
+      checksDiv.appendChild(countLine);
       
       promotionDiv.appendChild(checksDiv);
       container.appendChild(promotionDiv);
@@ -341,7 +371,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       // Otherwise round to nearest 0.25
-      return Math.round(grade * 4) / 4;
+      return Math.round(grade * 2) / 2;
     }
     
     // Get all rows (skip the header row)

@@ -6,8 +6,9 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      width: 400px;
+      width: 380px;
       padding: 15px;
+      margin: 0;
     }
     h1 {
       font-size: 18px;
@@ -15,7 +16,7 @@
       color: #333;
       text-align: center;
     }
-    h2 {
+    h2, h3 {
       font-size: 16px;
       margin-top: 15px;
       margin-bottom: 10px;
@@ -25,10 +26,11 @@
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 10px;
+      font-size: 13px;
     }
     th, td {
       border: 1px solid #ddd;
-      padding: 8px;
+      padding: 6px 8px;
       text-align: left;
     }
     th {
@@ -53,6 +55,18 @@
     .extract-btn:hover {
       background-color: #3367d6;
     }
+    .toggle-btn {
+      background-color: #f8f8f8;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background-color 0.2s;
+    }
+    .toggle-btn:hover {
+      background-color: #e8e8e8;
+    }
     .loading {
       text-align: center;
       margin: 15px 0;
@@ -60,10 +74,15 @@
       color: #666;
     }
     .promotion-status {
-      margin-top: 20px;
-      padding: 15px;
-      border: 1px solid #ddd;
+      padding: 12px;
       border-radius: 4px;
+      text-align: center;
+    }
+    .school-panel {
+      margin-bottom: 12px;
+      padding: 12px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
       background-color: #f9f9f9;
     }
     .promotion-rule {
@@ -71,16 +90,6 @@
       color: #666;
       margin-top: 5px;
       font-style: italic;
-    }
-    .summary-section {
-      margin-bottom: 20px;
-      padding: 10px;
-      background-color: #f0f7ff;
-      border-radius: 4px;
-      border: 1px solid #c0d6f9;
-    }
-    .course-section {
-      margin-bottom: 15px;
     }
   </style>
 </head>
